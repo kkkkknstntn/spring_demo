@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  demo_db:
+    image: postgres:16.0
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=demo_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - pg_demo:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - demo_db
+    links:
+      - demo_db
+    environment:
+      SPRING_R2DBC_URL: 'r2dbc:postgresql://demo_db/demo_db'
+      SPRING_R2DBC_USERNAME: 'postgres'
+      SPRING_R2DBC_PASSWORD: 'postgres'
+      SPRING_FLYWAY_URL: 'jdbc:postgresql://demo_db:5432/demo_db'
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  pg_demo:
