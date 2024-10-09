@@ -1,6 +1,7 @@
 package com.example.demo.errorhandling;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
 import com.example.demo.exception.ApiException;
@@ -34,8 +35,7 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         if (error instanceof AuthException || error instanceof UnauthorizedException ||
-                error instanceof ExpiredJwtException || error instanceof SignatureException ||
-                error instanceof MalformedJwtException) {
+                error instanceof JwtException) {
 
             status = HttpStatus.UNAUTHORIZED;
             if (error instanceof ApiException) {
@@ -47,7 +47,7 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
                 // Handle JWT exceptions separately
                 var errorMap = new LinkedHashMap<String, Object>();
                 errorMap.put("code", "JWT_ERROR");
-                errorMap.put("message", "JWT token is invalid or expired.");
+                errorMap.put("message", error.getMessage());
                 errorList.add(errorMap);
             }
 

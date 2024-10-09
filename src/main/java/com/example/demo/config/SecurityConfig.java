@@ -39,8 +39,19 @@ public class SecurityConfig {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final String[] publicRoutes = {"/api/users/create", "/api/auth/login", "/api/auth/refresh", "api/auth/oauth2/vk", "api/auth/login/**"};
-
+    private final String[] publicRoutes = {
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/auth/oauth2/vk",
+            "/api/auth/login/**",
+            "/swagger-ui.html",
+            "/webjars/swagger-ui/**",
+            "/v3/api-docs/**", // OpenAPI docs
+            "/swagger-resources/**", // Swagger resources
+            "/v3/api-docs", // OpenAPI docs endpoint
+            "/swagger-ui/index.html", // Swagger UI main page
+            "/swagger-ui/**" // Swagger UI assets
+    };
     @Bean
     PasswordEncoder passwordEncoder()
     {
@@ -83,6 +94,7 @@ public class SecurityConfig {
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
                         .pathMatchers(publicRoutes).permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/users").permitAll()
                         .anyExchange().authenticated())
 
                 .exceptionHandling(exceptionHandling -> exceptionHandling

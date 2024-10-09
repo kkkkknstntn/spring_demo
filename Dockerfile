@@ -1,7 +1,7 @@
 FROM gradle:8.10-jdk17 as builder
 WORKDIR /opt/app
 COPY . .
-RUN ./gradlew clean build -x test
+RUN ./gradlew clean build  -x test
 
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /opt/app

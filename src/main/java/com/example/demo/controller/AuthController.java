@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.RefreshDTO;
 import com.example.demo.security.oauth.OAuthService;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.dto.AuthRequestDTO;
@@ -8,6 +9,7 @@ import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.security.CustomPrincipal;
 import com.example.demo.security.SecurityService;
 import com.example.demo.service.UserServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
@@ -17,6 +19,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
     private final SecurityService securityService;
@@ -29,8 +32,9 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public Mono<AuthResponseDTO> refresh(@RequestBody String refreshToken) {
-        return securityService.refresh(refreshToken);
+    public Mono<AuthResponseDTO> refresh(@RequestBody RefreshDTO dto) {
+        log.info(dto.getRefreshToken());
+        return securityService.refresh(dto);
     }
 
     @GetMapping("/oauth2/vk")
