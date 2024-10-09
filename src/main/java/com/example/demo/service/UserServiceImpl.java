@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserResponseDTO;
+import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.enums.Provider;
 import com.example.demo.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +25,26 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     @Override
-    public Flux<UserDTO> getList() {
+    public Flux<UserResponseDTO> getList() {
         return userRepository.findAll()
-                .map(userMapper::map);
+                .map(userMapper::responseMap);
     }
 
     @Override
-    public Mono<UserDTO> create(UserDTO userDTO) {
+    public Mono<UserResponseDTO> create(UserRequestDTO userDTO) {
         return userRepository.save(
                 build(userDTO, Provider.PASSWORD )
-        ).doOnSuccess(u -> log.info("IN create - user: {} created", u)).map(userMapper::map);
+        ).doOnSuccess(u -> log.info("IN create - user: {} created", u)).map(userMapper::responseMap);
     }
 
-    public Mono<UserDTO> createVk(UserDTO userDTO) {
+    public Mono<UserResponseDTO> createVk(UserRequestDTO userDTO) {
         return userRepository.save(
                 build(userDTO, Provider.VK )
-        ).doOnSuccess(u -> log.info("IN createVk - user: {} created", u)).map(userMapper::map);
+        ).doOnSuccess(u -> log.info("IN createVk - user: {} created", u)).map(userMapper::responseMap);
     }
 
-    private User build (UserDTO userDTO, Provider provider){
-        User user = userMapper.map(userDTO);
+    private User build (UserRequestDTO userDTO, Provider provider){
+        User user = userMapper.requestMap(userDTO);
         return  user.toBuilder()
                 .password(provider == Provider.PASSWORD ? passwordEncoder.encode(user.getPassword()) : null)
                 .role(UserRole.USER)
@@ -55,7 +56,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Mono<UserDTO> update(Long id, UserDTO userDTO) {
+    public Mono<UserResponseDTO> update(Long id, UserRequestDTO userDTO) {
         return userRepository.findById(id)
                 .flatMap(existingUser -> {
                     User updatedUser = existingUser.toBuilder()
@@ -68,29 +69,29 @@ public class UserServiceImpl implements UserService {
 
                     return userRepository.save(updatedUser);
                 })
-                .map(userMapper::map);
+                .map(userMapper::responseMap);
     }
 
     @Override
-    public Mono<UserDTO> getById(Long id) {
+    public Mono<UserResponseDTO> getById(Long id) {
         return userRepository
                 .findById(id)
-                .map(userMapper::map);
+                .map(userMapper::responseMap);
     }
 
     @Override
-    public Mono<UserDTO> getByVkId(Long vkId){
+    public Mono<UserResponseDTO> getByVkId(Long vkId){
         return userRepository
                 .findByVkId(vkId)
-                .map(userMapper::map);
+                .map(userMapper::responseMap);
     }
 
 
     @Override
-    public Mono<UserDTO> getByUsername(String username) {
+    public Mono<UserResponseDTO> getByUsername(String username) {
         return userRepository
                 .findByUsername(username)
-                .map(userMapper::map);
+                .map(userMapper::responseMap);
     }
 
     @Override

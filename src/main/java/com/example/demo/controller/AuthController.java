@@ -4,7 +4,7 @@ import com.example.demo.security.oauth.OAuthService;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.dto.AuthRequestDTO;
 import com.example.demo.dto.AuthResponseDTO;
-import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.security.CustomPrincipal;
 import com.example.demo.security.SecurityService;
 import com.example.demo.service.UserServiceImpl;
@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public Mono<AuthResponseDTO> refresh(@RequestBody String refreshToken, Authentication authentication) {
+    public Mono<AuthResponseDTO> refresh(@RequestBody String refreshToken) {
         return securityService.refresh(refreshToken);
     }
 
@@ -44,7 +44,7 @@ public class AuthController {
     }
 
     @GetMapping("/info")
-    public Mono<UserDTO> getUserInfo(Authentication authentication) {
+    public Mono<UserResponseDTO> getUserInfo(Authentication authentication) {
         CustomPrincipal customPrincipal = (CustomPrincipal) authentication.getPrincipal();
         return userService.getById(customPrincipal.getId());
     }

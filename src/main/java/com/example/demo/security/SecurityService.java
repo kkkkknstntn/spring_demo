@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import com.example.demo.entity.User;
 import com.example.demo.exception.AuthException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
@@ -25,6 +24,7 @@ public class SecurityService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final JwtHandler jwtHandler;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -101,7 +101,7 @@ public class SecurityService {
     public Mono<TokenDetails> authenticate(String username, String password) {
         return userService.getByUsername(username)
                 .flatMap(dto -> {
-                    User user = userMapper.map(dto);
+                    User user = userMapper.responseMap(dto);
                     if (user.getProvider() != Provider.PASSWORD){
                         return Mono.error(new AuthException("Invalid provider", "INVALID_PROVIDER"));
                     }
@@ -126,7 +126,7 @@ public class SecurityService {
             String username = claims.get("username", String.class);
         return userService.getByUsername(username)
                 .flatMap(dto -> {
-                    User user = userMapper.map(dto);
+                    User user = userMapper.responseMap(dto);
                     return Mono.just(buildAuthResponse(generateToken(user).toBuilder()
                             .userId(user.getId())
                             .build()));

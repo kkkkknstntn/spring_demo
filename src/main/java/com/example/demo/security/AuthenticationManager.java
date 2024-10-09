@@ -1,6 +1,6 @@
 package com.example.demo.security;
 
-import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserResponseDTO;
 import com.example.demo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.exception.UnauthorizedException;
@@ -19,7 +19,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     public Mono<Authentication> authenticate(Authentication authentication) {
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
         return userService.getById(principal.getId())
-                .filter(UserDTO::isEnabled)
+                .filter(UserResponseDTO::isEnabled)
                 .switchIfEmpty(Mono.error(new UnauthorizedException("User disabled")))
                 .map(user -> authentication);
     }

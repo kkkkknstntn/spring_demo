@@ -1,7 +1,7 @@
 package com.example.demo.security.oauth;
 
 import com.example.demo.dto.AuthResponseDTO;
-import com.example.demo.dto.UserDTO;
+import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.repository.UserRepository;
@@ -65,12 +65,12 @@ public class OAuthService {
 
                         return userRepository.findByVkId(vkId)
                                 .flatMap(this::authenticate)
-                                .switchIfEmpty(userService.createVk(UserDTO.builder()
+                                .switchIfEmpty(userService.createVk(UserRequestDTO.builder()
                                         .firstName(firstName)
                                         .lastName(lastName)
                                         .username(domain)
                                         .vkId(vkId)
-                                        .build()).flatMap(createdUser -> authenticate(userMapper.map(createdUser))))
+                                        .build()).flatMap(createdUser -> authenticate(userMapper.responseMap(createdUser))))
                                 .flatMap(tokenDetails -> Mono.just(securityService.buildAuthResponse(tokenDetails)));
                     });
                 });

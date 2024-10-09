@@ -3,15 +3,18 @@ package com.example.demo.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import com.example.demo.exception.UnauthorizedException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.util.Base64;
 
+@Component
 public class JwtHandler {
 
     private final String secret;
 
-    public JwtHandler(String secret) {
+    public JwtHandler(@Value("${jwt.secret}") String secret) {
         this.secret = secret;
     }
 
@@ -22,7 +25,7 @@ public class JwtHandler {
                 .onErrorResume(e -> Mono.error(new UnauthorizedException(e.getMessage())));
     }
 
-    private Claims getClaimsFromToken(String token) {
+    public Claims getClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(Base64.getEncoder().encodeToString(secret.getBytes()))
                 .parseClaimsJws(token)
