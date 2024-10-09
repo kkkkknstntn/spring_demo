@@ -15,10 +15,20 @@ import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction;
+import org.springframework.security.oauth2.client.web.server.ServerOAuth2AuthorizedClientRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Slf4j
 @Configuration
@@ -29,7 +39,7 @@ public class SecurityConfig {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final String[] publicRoutes = {"/api/v1/auth/register", "/api/v1/auth/login"};
+    private final String[] publicRoutes = {"/api/users/create", "/api/auth/login", "/api/auth/refresh", "api/auth/oauth2/vk", "api/auth/login/**"};
 
     @Bean
     PasswordEncoder passwordEncoder()
@@ -37,14 +47,44 @@ public class SecurityConfig {
         return (PasswordEncoder) new BCryptPasswordEncoder();
     }
 
+
+    @Bean
+    public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
+            ReactiveClientRegistrationRepository clientRegistrationRepository,
+            ServerOAuth2AuthorizedClientRepository authorizedClientRepository) {
+
+        ReactiveOAuth2AuthorizedClientProvider authorizedClientProvider =
+                ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+                        .authorizationCode()
+                        .refreshToken()
+                        .clientCredentials()
+                        .build();
+
+        DefaultReactiveOAuth2AuthorizedClientManager authorizedClientManager =
+                new DefaultReactiveOAuth2AuthorizedClientManager(clientRegistrationRepository, authorizedClientRepository);
+        authorizedClientManager.setAuthorizedClientProvider(authorizedClientProvider);
+        return authorizedClientManager;
+    }
+
+
+    @Bean
+    WebClient webClient(ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
+        ServerOAuth2AuthorizedClientExchangeFilterFunction oauth2Client =
+                new ServerOAuth2AuthorizedClientExchangeFilterFunction(authorizedClientManager);
+        return WebClient.builder()
+                .filter(oauth2Client)
+                .build();
+    }
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AuthenticationManager authenticationManager) {
         return http
-                .csrf(ServerHttpSecurity.CsrfSpec::disable) // Keep this if you're sure CSRF protection isn't needed.
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
                         .pathMatchers(publicRoutes).permitAll()
                         .anyExchange().authenticated())
+
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((swe, e) -> {
                             log.error("Unauthorized error: {}", e.getMessage());
@@ -53,8 +93,10 @@ public class SecurityConfig {
                         .accessDeniedHandler((swe, e) -> {
                             log.error("Access denied: {}", e.getMessage());
                             return Mono.fromRunnable(() -> swe.getResponse().setStatusCode(HttpStatus.FORBIDDEN));
-                        }))
+                        })
+                )
                 .addFilterAt(bearerAuthenticationFilter(authenticationManager), SecurityWebFiltersOrder.AUTHENTICATION)
+                .oauth2Login(withDefaults())
                 .build();
     }
 

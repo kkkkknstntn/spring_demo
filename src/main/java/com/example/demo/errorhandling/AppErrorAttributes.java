@@ -32,24 +32,37 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
         var errorList = new ArrayList<Map<String, Object>>();
 
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-        if (error instanceof AuthException || error instanceof UnauthorizedException
-               || error instanceof ExpiredJwtException || error instanceof SignatureException || error instanceof MalformedJwtException) {
+
+        if (error instanceof AuthException || error instanceof UnauthorizedException ||
+                error instanceof ExpiredJwtException || error instanceof SignatureException ||
+                error instanceof MalformedJwtException) {
+
             status = HttpStatus.UNAUTHORIZED;
-            var errorMap = new LinkedHashMap<String, Object>();
-            assert error instanceof ApiException;
-            errorMap.put("code", ((ApiException) error).getErrorCode());
-            errorMap.put("message", error.getMessage());
-            errorList.add(errorMap);
+            if (error instanceof ApiException) {
+                var errorMap = new LinkedHashMap<String, Object>();
+                errorMap.put("code", ((ApiException) error).getErrorCode());
+                errorMap.put("message", error.getMessage());
+                errorList.add(errorMap);
+            } else {
+                // Handle JWT exceptions separately
+                var errorMap = new LinkedHashMap<String, Object>();
+                errorMap.put("code", "JWT_ERROR");
+                errorMap.put("message", "JWT token is invalid or expired.");
+                errorList.add(errorMap);
+            }
+
         } else if (error instanceof ApiException) {
             status = HttpStatus.BAD_REQUEST;
             var errorMap = new LinkedHashMap<String, Object>();
             errorMap.put("code", ((ApiException) error).getErrorCode());
             errorMap.put("message", error.getMessage());
             errorList.add(errorMap);
+
         } else {
             var message = error.getMessage();
-            if (message == null)
+            if (message == null) {
                 message = error.getClass().getName();
+            }
 
             var errorMap = new LinkedHashMap<String, Object>();
             errorMap.put("code", "INTERNAL_ERROR");
@@ -64,5 +77,6 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
 
         return errorAttributes;
     }
+
 }
 

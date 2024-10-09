@@ -1,9 +1,9 @@
 package com.example.demo.security;
 
-import lombok.RequiredArgsConstructor;
-import com.example.demo.entity.User;
-import com.example.demo.exception.UnauthorizedException;
+import com.example.demo.dto.UserDTO;
 import com.example.demo.service.UserService;
+import lombok.RequiredArgsConstructor;
+import com.example.demo.exception.UnauthorizedException;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         CustomPrincipal principal = (CustomPrincipal) authentication.getPrincipal();
-        return userService.getUserById(principal.getId())
-                .filter(User::isEnabled)
+        return userService.getById(principal.getId())
+                .filter(UserDTO::isEnabled)
                 .switchIfEmpty(Mono.error(new UnauthorizedException("User disabled")))
                 .map(user -> authentication);
     }

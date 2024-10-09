@@ -15,8 +15,8 @@ public class JwtHandler {
         this.secret = secret;
     }
 
-    public Mono<VerificationResult> check(String accessToken) {
-        VerificationResult verificationResult = new VerificationResult(getClaimsFromToken(accessToken), accessToken);
+    public Mono<VerificationResult> check(String token) {
+        VerificationResult verificationResult = new VerificationResult(getClaimsFromToken(token), token);
 
         return Mono.just(verificationResult)
                 .onErrorResume(e -> Mono.error(new UnauthorizedException(e.getMessage())));
@@ -30,8 +30,8 @@ public class JwtHandler {
     }
 
     public static class VerificationResult {
-        public Claims claims;
-        public String token;
+        public final Claims claims;
+        public final String token;
 
         public VerificationResult(Claims claims, String token) {
             this.claims = claims;

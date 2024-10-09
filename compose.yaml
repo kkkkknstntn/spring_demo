@@ -19,12 +19,17 @@ services:
     restart: always
     build: .
     ports:
-      - "8080:8080"
+      - "80:8080"
     depends_on:
       - demo_db
     links:
       - demo_db
     environment:
+      JWT_SECRET: 'xyz'
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_VK_CLIENTID: 'xyz'
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_VK_CLIENTSECRET: 'xyz'
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENTID: 'xyz'
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENTSECRET: 'xyz'
       SPRING_R2DBC_URL: 'r2dbc:postgresql://demo_db/demo_db'
       SPRING_R2DBC_USERNAME: 'postgres'
       SPRING_R2DBC_PASSWORD: 'postgres'

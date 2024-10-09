@@ -13,7 +13,10 @@ import java.util.Date;
 @AllArgsConstructor
 public class TokenDetails {
     private Long userId;
-    private String token;
-    private Date issuedAt;
-    private Date expiresAt;
+    private String accessToken;
+    private Date accessIssuedAt;
+    private Date accessExpiresAt;
+    private String refreshToken;
+    private Date refreshIssuedAt;
+    private Date refreshExpiresAt;
 }

@@ -3,10 +3,10 @@ package com.example.demo.exception;
 
 import lombok.Getter;
 
+@Getter
 public class ApiException extends RuntimeException{
 
-    @Getter
-    protected String errorCode;
+    protected final String errorCode;
 
     public ApiException(String message, String errorCode) {
         super(message);

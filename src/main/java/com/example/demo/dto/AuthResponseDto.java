@@ -14,11 +14,11 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class AuthResponseDto {
-
+public class AuthResponseDTO {
     private Long userId;
-    private String token;
     private Date issuedAt;
-    private Date expiresAt;
-
+    private String accessToken;
+    private Date accessExpiresAt;
+    private String refreshToken;
+    private Date refreshExpiresAt;
 }

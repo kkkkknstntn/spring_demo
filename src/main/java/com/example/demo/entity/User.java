@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.Provider;
 import com.example.demo.enums.UserRole;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -20,6 +21,8 @@ public class User {
     private UserRole role;
     private String firstName;
     private String lastName;
+    private Long vkId;
+    private Provider provider;
     private boolean enabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

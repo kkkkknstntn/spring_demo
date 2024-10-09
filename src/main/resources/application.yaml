@@ -9,9 +9,35 @@ spring:
     password: postgres
     baseline-on-migrate: true
     baseline-version: 0
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: xyz
+            clientSecret: xyz
+          vk:
+            clientName: vk
+            clientId: xyz
+            clientSecret: xyz
+            redirect-uri: http://localhost/api/auth/login/oauth2/code/vk
+            authorizationGrantType: authorization_code
+            clientAuthenticationMethod: client_secret_post
+            scope:
+              - email
+              - profile
+            provider: vk
+        provider:
+          vk:
+            authorizationUri: https://oauth.vk.com/authorize?v=199
+            tokenUri: https://oauth.vk.com/access_token
+            userInfoUri: https://api.vk.com/method/users.get?v=199
+            userNameAttribute: response
+
+
 
 jwt:
-  secret: b5f59337a612a2a7dc07328f3e7d1a04722967c7f06df20a499a7d3f91ff2a7e
-  expiration: 3600
+  secret: xyz
+  expiration: 60
   issuer: demo
 

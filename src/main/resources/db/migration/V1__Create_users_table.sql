@@ -5,6 +5,8 @@ CREATE TABLE users (
     role VARCHAR(50) NOT NULL,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
+    vk_id BIGINT,
+    provider VARCHAR(50) NOT NULL,
     enabled BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
