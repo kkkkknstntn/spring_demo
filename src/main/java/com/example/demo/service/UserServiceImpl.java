@@ -44,9 +44,8 @@ public class UserServiceImpl implements UserService {
     public Mono<UserResponseDTO> createVk(UserRequestDTO userDTO) {
         User user = build(userDTO);
         return userRepository.save(user.toBuilder()
-                .provider(Provider.PASSWORD)
-                .password(passwordEncoder.encode(user.getPassword()))
-                .vkId(null)
+                .provider(Provider.VK)
+                .password(null)
                 .build()
         ).doOnSuccess(u -> log.info("IN createVk - user: {} created", u)).map(userMapper::responseMap);
     }
