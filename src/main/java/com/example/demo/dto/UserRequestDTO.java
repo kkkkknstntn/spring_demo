@@ -9,7 +9,6 @@ import lombok.Data;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Builder(toBuilder = true)
 public class UserRequestDTO {
-    private Long id;
     private String username;
     private String password;
     private String firstName;

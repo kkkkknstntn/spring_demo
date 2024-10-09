@@ -41,3 +41,6 @@ jwt:
   issuer: demo
 
 
+module-name: aboba
+api-version: 1.0.0
+
