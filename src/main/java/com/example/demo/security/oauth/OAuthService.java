@@ -69,8 +69,7 @@ public class OAuthService {
                                         .firstName(firstName)
                                         .lastName(lastName)
                                         .username(domain)
-                                        .vkId(vkId)
-                                        .build()).flatMap(createdUser -> authenticate(userMapper.responseMap(createdUser))))
+                                        .build(), vkId).flatMap(createdUser -> authenticate(userMapper.responseMap(createdUser))))
                                 .flatMap(tokenDetails -> Mono.just(securityService.buildAuthResponse(tokenDetails)));
                     });
                 });

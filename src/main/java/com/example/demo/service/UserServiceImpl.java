@@ -41,11 +41,12 @@ public class UserServiceImpl implements UserService {
         ).doOnSuccess(u -> log.info("IN create - user: {} created", u)).map(userMapper::responseMap);
     }
 
-    public Mono<UserResponseDTO> createVk(UserRequestDTO userDTO) {
+    public Mono<UserResponseDTO> createVk(UserRequestDTO userDTO, Long vkId) {
         User user = build(userDTO);
         return userRepository.save(user.toBuilder()
                 .provider(Provider.VK)
                 .password(null)
+                .vkId(vkId)
                 .build()
         ).doOnSuccess(u -> log.info("IN createVk - user: {} created", u)).map(userMapper::responseMap);
     }

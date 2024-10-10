@@ -13,7 +13,7 @@ public interface UserService {
     Mono<UserResponseDTO> getByVkId(Long vkId);
     Flux<UserResponseDTO> getList();
     Mono<UserResponseDTO> create(UserRequestDTO userDTO);
-    Mono<UserResponseDTO> createVk(UserRequestDTO userDTO);
+    Mono<UserResponseDTO> createVk(UserRequestDTO userDTO, Long vkId);
     Mono<UserResponseDTO> update(Long id, UserRequestDTO userDTO);
     Mono<Void> delete(Long id);
 }
