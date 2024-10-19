@@ -18,6 +18,8 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private Integer wins;
+    private Integer loses;
     private UserRole role;
     private String firstName;
     private String lastName;
@@ -26,9 +28,4 @@ public class User {
     private boolean enabled;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    @ToString.Include(name = "password")
-    private String maskPassword() {
-        return "********";
-    }
 }

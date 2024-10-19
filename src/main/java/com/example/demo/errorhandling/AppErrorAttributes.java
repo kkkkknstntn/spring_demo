@@ -1,9 +1,6 @@
 package com.example.demo.errorhandling;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import com.example.demo.exception.ApiException;
 import com.example.demo.exception.AuthException;
 import com.example.demo.exception.UnauthorizedException;

@@ -5,6 +5,8 @@ CREATE TABLE users (
     role VARCHAR(50) NOT NULL,
     first_name VARCHAR(255),
     last_name VARCHAR(255),
+    wins INT DEFAULT 0,
+    loses INT DEFAULT 0,
     vk_id BIGINT,
     provider VARCHAR(50) NOT NULL,
     enabled BOOLEAN DEFAULT TRUE,

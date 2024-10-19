@@ -50,7 +50,9 @@ public class SecurityConfig {
             "/swagger-resources/**", // Swagger resources
             "/v3/api-docs", // OpenAPI docs endpoint
             "/swagger-ui/index.html", // Swagger UI main page
-            "/swagger-ui/**" // Swagger UI assets
+            "/swagger-ui/**", // Swagger UI assets
+            "/api/games/**",
+            "api/games"
     };
     @Bean
     PasswordEncoder passwordEncoder()
